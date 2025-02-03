@@ -1,0 +1,264 @@
+/* Ciemne tło dla całej strony */
+body {
+  background-color: #121212;
+  color: white;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  flex-direction: column;
+}
+
+/* Główny kontener aplikacji */
+.app-container {
+  width: 80%;
+  max-width: 800px;
+  background: #1e1e1e; /* Kontrastujące tło */
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Kontener dla transkrypcji */
+.transcription-container {
+  width: 80%;
+  max-width: 800px;
+  background: #2a2a2a;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  text-align: left;
+}
+
+/* Nagłówek */
+.header {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Styl dla wszystkich przycisków */
+button {
+  background: #007bff;
+  color: white;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+  margin: 10px;
+  width: 200px;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+/* Input jako przycisk */
+.input-button {
+  background: #007bff;
+  color: white;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+  margin: 10px;
+  display: inline-block;
+  width: 200px;
+  text-align: center;
+}
+
+.input-button:hover {
+  background: #0056b3;
+}
+
+/* Ukrycie domyślnego input file */
+.hidden-input {
+  display: none;
+}
+
+/* Styl dla nagłówka transkrypcji */
+.transcription-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.transcription-text {
+  font-size: 1.2rem;
+  word-break: break-word;
+  margin-top: 10px;
+}
+
+.recording-time {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #ff4b5c;
+  margin-bottom: 10px;
+}
+
+.response-container {
+  width: 80%;
+  max-width: 800px;
+  background: #252525;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  text-align: left;
+  margin-top: 20px;
+  max-height: 300px;
+  overflow-y: auto; /* Dodanie przewijania, jeśli odpowiedź jest długa */
+}
+
+/* Nagłówek odpowiedzi ChatGPT */
+.response-header {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #ffffff;
+  border-bottom: 2px solid #444;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+
+/* Styl tekstu odpowiedzi */
+.response-text {
+  font-size: 1.1rem;
+  color: #ccc;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.analysis-container {
+  width: 80%;
+  max-width: 800px;
+  background: #252525;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  text-align: left;
+  margin-top: 20px;
+  max-height: 300px;
+  overflow-y: auto; /* Przewijanie dla długiej analizy */
+}
+
+/* Nagłówek analizy GPT */
+.analysis-header {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #812b2b;
+  border-bottom: 2px solid #444;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+
+/* Styl tekstu analizy */
+.analysis-text {
+  font-size: 1.1rem;
+  color: #ccc;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.transcription-container {
+  max-width: 600px;
+  width: 100%;
+  background-color: #1c1c1c;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+/* Kontener segmentów transkrypcji */
+.transcription-segments {
+  border: 1px solid #444;
+  padding: 10px;
+  border-radius: 6px;
+  max-height: 300px; /* wysokość obszaru przewijania */
+  overflow-y: auto;
+  background-color: #2a2a2a;
+}
+
+/* Każda linia segmentu */
+.segment-line {
+  display: block;
+  margin-bottom: 10px;
+  word-break: break-word;
+  white-space: pre-wrap;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.95em;
+}
+
+/* Styl dla segmentów w zależności od mówcy */
+
+/* Mówca 0: lewa strona */
+.bubble-left {
+  background-color: #333; /* ciemnoszary */
+  text-align: left;
+}
+
+/* Mówca 1: prawa strona */
+.bubble-right {
+  background-color: #444; /* trochę jaśniejsze */
+  text-align: right;
+}
+
+/* Inny mówca */
+.bubble-other {
+  background-color: #3a3a3a;
+}
+
+/* Nazwa mówcy (np. SPEAKER_00) */
+.segment-speaker {
+  color: #ffca28; /* złotawy */
+  margin-right: 6px;
+  font-weight: bold;
+}
+
+/* Treść segmentu (dymek) */
+.segment-content {
+  color: #f1f1f1;
+}
+
+/* Nagłówek sekcji */
+.section-title {
+  margin-top: 0;
+}
+
+/* Kontener analizy */
+.analysis-container {
+  max-width: 600px;
+  width: 100%;
+  background-color: #1c1c1c;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+/* Nagłówek sekcji analizy */
+.analysis-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Tekst analizy */
+.analysis-text {
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  padding: 10px;
+  border-radius: 6px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-top: 10px;
+}
