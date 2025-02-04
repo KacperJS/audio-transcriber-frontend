@@ -13,6 +13,7 @@ const App = () => {
     const [analysis, setAnalysis] = useState(""); // Stan dla analizy (ChatGPT)
     const [isRecording, setIsRecording] = useState(false);
     const [recordingTime, setRecordingTime] = useState(0);
+    const [outlineItems, setOutlineItems] = useState([]); // Nowy stan do przechowywania hierarchii
     const intervalRef = useRef(null);
 
     const { startRecording, stopRecording, mediaBlobUrl, status } = useReactMediaRecorder({
@@ -78,7 +79,20 @@ const App = () => {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             const result = response.data.text;
-            setTranscription(typeof result === "object" ? JSON.stringify(result, null, 2) : result);
+
+            // Dodajemy nowy element do outline
+            setOutlineItems(prevItems => [
+                ...prevItems,
+                {
+                    id: Date.now(), // lub inna metoda generowania unikalnych id
+                    title: `Nagranie z ${new Date().toLocaleString()}`,
+                    tags: ["#audio"],
+                    children: [
+                        { id: Date.now() + 1, title: "Transkrypcja:\n" + result, children: [] }
+                    ]
+                }
+            ]);
+            setTranscription(result); // Utrzymujemy stary stan dla kompatybilności
         } catch (error) {
             console.error("❌ Błąd transkrypcji:", error);
             alert("Wystąpił problem z transkrypcją pliku.");
@@ -92,7 +106,22 @@ const App = () => {
         }
         try {
             const response = await axios.post(`${backendURL}/analyze`, { text: transcription });
-            setAnalysis(response.data.analysis);
+            const analysis = response.data.analysis;
+
+            // Dodajemy analizę jako dziecko do ostatniego elementu w outline
+            setOutlineItems(prevItems => {
+                if (prevItems.length > 0) {
+                    const lastItem = { ...prevItems[prevItems.length - 1] };
+                    lastItem.children.push({
+                        id: Date.now(),
+                        title: "Analiza:\n" + analysis,
+                        children: []
+                    });
+                    return [...prevItems.slice(0, -1), lastItem];
+                }
+                return prevItems; // Jeśli nie ma elementów, nie dodajemy analizy
+            });
+            setAnalysis(analysis); // Utrzymujemy stary stan dla kompatybilności
         } catch (error) {
             console.error("❌ Błąd analizy transkrypcji:", error);
             alert("Wystąpił problem z analizą transkrypcji.");
@@ -109,10 +138,6 @@ const App = () => {
         doc.save("transkrypcja.pdf");
     };
 
-    // === NOWE: Funkcja do parsowania transkrypcji ===
-    // Przyjmujemy, że transcription to ciąg znaków, np.:
-    // SPEAKER_00: ...\nSPEAKER_01: ...
-    // Dzielimy na linie, a potem każdą linię dzielimy na [speaker, text].
     const parseTranscription = (text) => {
         // Dzielimy po liniach
         const lines = text.split("\n").filter((line) => line.trim() !== "");
@@ -136,6 +161,18 @@ const App = () => {
     if (transcription) {
         segments = parseTranscription(transcription);
     }
+
+    // Funkcja do renderowania zagnieżdżonych list
+    const renderOutlineItem = (item) => (
+        <li key={item.id}>
+            {item.title}
+            {item.children && item.children.length > 0 && (
+                <ul>
+                    {item.children.map(child => renderOutlineItem(child))}
+                </ul>
+            )}
+        </li>
+    );
 
     return (
         <>
@@ -169,15 +206,8 @@ const App = () => {
             {transcription && (
                 <div className="transcription-container">
                     <h3>📄 Transkrypcja</h3>
-                    {/*
-            Zamiast jednego <pre> z całym tekstem, rozbijamy na segmenty
-          */}
                     <div className="transcription-segments">
                         {segments.map((seg, idx) => {
-                            // Możesz zrobić np. warunek speaker === "SPEAKER_00" => klasa lewa, speaker === "SPEAKER_01" => klasa prawa
-                            // Ale na razie zrobimy po prostu zwykły styl
-
-                            // Przykład logiki stylu
                             const bubbleClass =
                                 seg.speaker.includes("SPEAKER_00") ? "bubble-left" :
                                     seg.speaker.includes("SPEAKER_01") ? "bubble-right" : "bubble-other";
@@ -190,8 +220,14 @@ const App = () => {
                             );
                         })}
                     </div>
-
                     <button onClick={handleAnalyzeTranscription}>🤖 Analizuj transkrypcję</button>
+                </div>
+            )}
+
+            {outlineItems.length > 0 && (
+                <div className="outline-container">
+                    <h3>📄 Hierarchia Transkrypcji</h3>
+                    <ul>{outlineItems.map(renderOutlineItem)}</ul>
                 </div>
             )}
 
