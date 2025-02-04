@@ -263,7 +263,6 @@ button:hover {
   margin-top: 10px;
 }
 
-/* Dodaj w pliku App.css */
 .outline-container {
   width: 80%;
   max-width: 800px;
@@ -275,16 +274,27 @@ button:hover {
   margin-top: 20px;
 }
 
-.outline-container ul {
+.outline-list {
   list-style-type: none;
+  padding-left: 0;
+}
+
+.outline-item {
+  margin-bottom: 10px;
+  background-color: #333;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.item-content {
+  color: #ccc;
+}
+
+.children-list {
   padding-left: 20px;
 }
 
-.outline-container li {
-  color: #ccc;
-  margin-bottom: 10px;
-}
-
-.outline-container li ul {
-  margin-left: 10px;
+/* Dodajemy styl do nowego przycisku */
+.transcription-container button {
+  margin: 5px;
 }

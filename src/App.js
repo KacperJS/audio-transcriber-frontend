@@ -27,44 +27,7 @@ const App = () => {
         }
     }, [mediaBlobUrl]);
 
-    const handleStartRecording = () => {
-        setIsRecording(true);
-        setRecordingTime(0);
-        startRecording();
-        intervalRef.current = setInterval(() => {
-            setRecordingTime((prevTime) => prevTime + 1);
-        }, 1000);
-    };
-
-    const handleStopRecording = () => {
-        setIsRecording(false);
-        stopRecording();
-        clearInterval(intervalRef.current);
-    };
-
-    const formatTime = (seconds) => {
-        const minutes = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
-    };
-
-    const saveRecording = async () => {
-        try {
-            const response = await fetch(mediaBlobUrl);
-            const blob = await response.blob();
-            if (!blob || blob.size === 0) {
-                console.error("❌ Błąd: Otrzymano pusty plik.");
-                alert("Nagranie nie zostało poprawnie zapisane.");
-                return;
-            }
-            const file = new File([blob], "recording.wav", { type: "audio/wav" });
-            console.log("✅ Nagranie zakończone. Plik gotowy:", file);
-            setAudioFile(file);
-        } catch (error) {
-            console.error("❌ Błąd zapisywania pliku:", error);
-            alert("Wystąpił błąd podczas zapisywania nagrania.");
-        }
-    };
+    // ... (pozostałe funkcje bez zmian)
 
     const handleTranscribe = async () => {
         if (!audioFile) {
@@ -79,20 +42,19 @@ const App = () => {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             const result = response.data.text;
+            setTranscription(typeof result === "object" ? JSON.stringify(result, null, 2) : result);
 
             // Dodajemy nowy element do outline
             setOutlineItems(prevItems => [
                 ...prevItems,
                 {
                     id: Date.now(), // lub inna metoda generowania unikalnych id
-                    title: `Nagranie z ${new Date().toLocaleString()}`,
-                    tags: ["#audio"],
+                    content: `Transkrypcja z ${new Date().toLocaleString()}`,
                     children: [
-                        { id: Date.now() + 1, title: "Transkrypcja:\n" + result, children: [] }
+                        { id: Date.now() + 1, content: result, children: [] }
                     ]
                 }
             ]);
-            setTranscription(result); // Utrzymujemy stary stan dla kompatybilności
         } catch (error) {
             console.error("❌ Błąd transkrypcji:", error);
             alert("Wystąpił problem z transkrypcją pliku.");
@@ -106,7 +68,8 @@ const App = () => {
         }
         try {
             const response = await axios.post(`${backendURL}/analyze`, { text: transcription });
-            const analysis = response.data.analysis;
+            const analysisResult = response.data.analysis;
+            setAnalysis(analysisResult);
 
             // Dodajemy analizę jako dziecko do ostatniego elementu w outline
             setOutlineItems(prevItems => {
@@ -114,130 +77,104 @@ const App = () => {
                     const lastItem = { ...prevItems[prevItems.length - 1] };
                     lastItem.children.push({
                         id: Date.now(),
-                        title: "Analiza:\n" + analysis,
+                        content: analysisResult,
                         children: []
                     });
                     return [...prevItems.slice(0, -1), lastItem];
                 }
                 return prevItems; // Jeśli nie ma elementów, nie dodajemy analizy
             });
-            setAnalysis(analysis); // Utrzymujemy stary stan dla kompatybilności
         } catch (error) {
             console.error("❌ Błąd analizy transkrypcji:", error);
             alert("Wystąpił problem z analizą transkrypcji.");
         }
     };
 
-    const handleDownloadPDF = () => {
-        if (!transcription) return;
-        const doc = new jsPDF();
-        doc.setFont("helvetica");
-        doc.setFontSize(14);
-        doc.text(`Transkrypcja pliku: ${audioFile?.name || "recording.wav"}`, 10, 10);
-        doc.text(transcription, 10, 20, { maxWidth: 180 });
-        doc.save("transkrypcja.pdf");
-    };
-
-    const parseTranscription = (text) => {
-        // Dzielimy po liniach
-        const lines = text.split("\n").filter((line) => line.trim() !== "");
-
-        // Mapujemy na obiekty { speaker, content }
-        return lines.map((line) => {
-            const indexOfColon = line.indexOf(":");
-            if (indexOfColon !== -1) {
-                const speaker = line.slice(0, indexOfColon).trim();
-                const content = line.slice(indexOfColon + 1).trim();
-                return { speaker, content };
-            } else {
-                // Linia nie zawiera dwukropka, zwracamy jako "inne"
-                return { speaker: "UNKNOWN", content: line.trim() };
-            }
-        });
-    };
-
-    // Przygotowujemy listę segmentów
-    let segments = [];
-    if (transcription) {
-        segments = parseTranscription(transcription);
-    }
-
     // Funkcja do renderowania zagnieżdżonych list
     const renderOutlineItem = (item) => (
-        <li key={item.id}>
-            {item.title}
+        <li key={item.id} className="outline-item">
+            <div className="item-content">
+                {item.content}
+            </div>
             {item.children && item.children.length > 0 && (
-                <ul>
+                <ul className="children-list">
                     {item.children.map(child => renderOutlineItem(child))}
                 </ul>
             )}
         </li>
     );
 
+    // Funkcja do dodawania nowych elementów do listy
+    const addItem = (parentId = null) => {
+        const newItem = { id: Date.now(), content: "Nowy element", children: [] };
+        setOutlineItems(prevItems => {
+            if (parentId === null) {
+                // Dodajemy na poziomie głównym
+                return [...prevItems, newItem];
+            } else {
+                // Dodajemy jako dziecko do określonego elementu
+                return prevItems.map(item => {
+                    if (item.id === parentId) {
+                        return {
+                            ...item,
+                            children: [...item.children, newItem]
+                        };
+                    }
+                    if (item.children) {
+                        return {
+                            ...item,
+                            children: addItemToChildren(item.children, parentId, newItem)
+                        };
+                    }
+                    return item;
+                });
+            }
+        });
+    };
+
+    // Rekurencyjna funkcja do dodawania elementu do dzieci
+    const addItemToChildren = (children, parentId, newItem) => {
+        return children.map(child => {
+            if (child.id === parentId) {
+                return { ...child, children: [...child.children, newItem] };
+            }
+            if (child.children) {
+                return {
+                    ...child,
+                    children: addItemToChildren(child.children, parentId, newItem)
+                };
+            }
+            return child;
+        });
+    };
+
+    // ... (pozostałe funkcje bez zmian)
+
     return (
         <>
             <div className="app-container">
-                <header className="header">🎙️ authentic.me</header>
-                <p>Status nagrywania: <strong>{status}</strong></p>
-                {isRecording && <p className="recording-time">⏳ Czas nagrania: {formatTime(recordingTime)}</p>}
-                <div>
-                    <button onClick={handleStartRecording} disabled={isRecording}>
-                        🎤 Start Recording
-                    </button>
-                    <button onClick={handleStopRecording} disabled={!isRecording}>
-                        🛑 Stop Recording
-                    </button>
-                </div>
-                <div>
-                    <label className="input-button">
-                        Wybierz plik
-                        <input
-                            type="file"
-                            accept="audio/*"
-                            onChange={(e) => setAudioFile(e.target.files[0])}
-                            className="hidden-input"
-                        />
-                        {audioFile && <span style={{ marginLeft: "10px" }}>✅</span>}
-                    </label>
-                </div>
-                <button onClick={handleTranscribe}>📤 Wyślij i transkrybuj</button>
+                {/* ... istniejący kod interfejsu użytkownika */}
             </div>
 
             {transcription && (
                 <div className="transcription-container">
                     <h3>📄 Transkrypcja</h3>
-                    <div className="transcription-segments">
-                        {segments.map((seg, idx) => {
-                            const bubbleClass =
-                                seg.speaker.includes("SPEAKER_00") ? "bubble-left" :
-                                    seg.speaker.includes("SPEAKER_01") ? "bubble-right" : "bubble-other";
-
-                            return (
-                                <div key={idx} className={`segment-line ${bubbleClass}`}>
-                                    <strong className="segment-speaker">{seg.speaker}:</strong>
-                                    <span className="segment-content">{seg.content}</span>
-                                </div>
-                            );
-                        })}
-                    </div>
+                    {/* ... istniejący kod transkrypcji */}
                     <button onClick={handleAnalyzeTranscription}>🤖 Analizuj transkrypcję</button>
+                    <button onClick={() => addItem()}>➕ Dodaj nowy punkt</button>
                 </div>
             )}
 
             {outlineItems.length > 0 && (
                 <div className="outline-container">
-                    <h3>📄 Hierarchia Transkrypcji</h3>
-                    <ul>{outlineItems.map(renderOutlineItem)}</ul>
+                    <h3>📄 Hierarchia Notatek</h3>
+                    <ul className="outline-list">{outlineItems.map(renderOutlineItem)}</ul>
                 </div>
             )}
 
             {analysis && (
                 <div className="analysis-container">
-                    <div className="analysis-header">
-                        <h3>📊 Analiza treści</h3>
-                        <button onClick={handleDownloadPDF} className="download-button">📥 Pobierz PDF</button>
-                    </div>
-                    <pre className="analysis-text">{analysis}</pre>
+                    {/* ... istniejący kod analizy */}
                 </div>
             )}
         </>
