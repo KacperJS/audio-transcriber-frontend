@@ -1,0 +1,57 @@
+/* ================================
+   Dynalist.css
+   Style dedykowane logice bullet-list
+   i hierarchicznej strukturze
+================================ */
+
+/* Główny kontener listy (ew. wstawiasz tam, gdzie ją rysujesz) */
+.bullet-list {
+    margin-top: 20px;
+    text-align: left;
+}
+
+/* Pojedynczy element listy (tzw. bullet-item).
+   Dajemy mu ciemne tło, marginesy itp. */
+.bullet-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 8px;
+    background: #2a2a2a;
+    border-radius: 6px;
+    cursor: text; /* kursory do edycji tekstu */
+}
+
+/* Pole tekstowe w bullet-item, w którym edytujemy treść notatki */
+.bullet-input {
+    flex: 1;
+    padding: 6px 8px;
+    font-size: 1rem;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #f1f1f1;  /* jasny kolor w dark mode */
+}
+
+/* Placeholder dla ikony fold/unfold,
+   lub samej ikony, jeśli chcesz dodać strzałki do zagnieżdżeń */
+.fold-toggle,
+.fold-toggle-placeholder {
+    width: 24px;
+    display: inline-block;
+    text-align: center;
+    margin-right: 8px;
+}
+
+/* Ewentualne style dodatkowe dla itemów zaznaczonych lub poszukiwanych.
+   Jeśli potrzebujesz "selected" – to np.:
+.bullet-item.selected {
+  background: #007bff;
+}
+*/
+
+/* Możesz też dodać styl dla zagnieżdżenia po indent,
+   ale w mechanizmie indent-based
+   najczęściej stosujesz margin-left dynamicznie w style={{ marginLeft: item.indent * 20 }}
+   w samym komponencie React.
+   Więc tu nie zawsze trzeba nic. */
