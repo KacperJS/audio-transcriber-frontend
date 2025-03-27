@@ -1,6 +1,4 @@
-/* App.css - styl w dark mode */
-
-/* Globalny reset/ciemne tło */
+/* Globalne style */
 body {
   margin: 0;
   padding: 0;
@@ -38,7 +36,6 @@ button:hover {
   background: #0056b3;
 }
 
-/* Input "Wybierz plik" */
 .input-button {
   background: #007bff;
   color: white;
@@ -54,9 +51,10 @@ button:hover {
   display: none;
 }
 
-/* Transkrypcja / analiza style */
+/* Transkrypcja i analiza */
 .transcription-container,
-.analysis-container {
+.analysis-container,
+.pdf-analysis-container {
   background: #2a2a2a;
   padding: 16px;
   margin: 20px auto;
@@ -75,6 +73,7 @@ button:hover {
   background-color: #1f1f1f;
   margin-bottom: 10px;
 }
+
 .segment-line {
   margin-bottom: 8px;
   word-break: break-word;
@@ -83,7 +82,6 @@ button:hover {
   border-radius: 4px;
 }
 
-/* Bąbelki left/right */
 .bubble-left {
   background-color: #333;
   text-align: left;
@@ -96,18 +94,18 @@ button:hover {
   background-color: #3a3a3a;
 }
 
-/* Tekst mówcy */
 .segment-speaker {
   color: #ffca28;
   margin-right: 6px;
   font-weight: bold;
 }
+
 .segment-content {
   color: #f1f1f1;
 }
 
-/* Tekst analizy (surowy) */
-.analysis-text {
+.analysis-text,
+.pdf-analysis-text {
   background: #1f1f1f;
   padding: 10px;
   border-radius: 6px;
@@ -115,30 +113,15 @@ button:hover {
   white-space: pre-wrap;
 }
 
-/* Dynalist bullet-list */
-.bullet-list {
-  text-align: left;
-}
-.bullet-item {
+/* Layout */
+.app-layout {
   display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-  background: #2a2a2a;
-  border-radius: 6px;
-  padding: 6px;
+  padding: 20px;
 }
-.bullet-input {
+.left-panel {
   flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: #f1f1f1;
-  font-size: 1rem;
-  margin-left: 6px;
 }
-.fold-toggle,
-.fold-toggle-placeholder {
-  width: 24px;
-  text-align: center;
-  margin-right: 8px;
+.right-panel {
+  flex: 0.4;
+  margin-left: 20px;
 }

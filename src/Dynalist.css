@@ -1,28 +1,45 @@
-/* ================================
-   Dynalist.css
-   Style dedykowane logice bullet-list
-   i hierarchicznej strukturze
-================================ */
+/* Dynalist.css - profesjonalny wygląd bullet itemów */
 
-/* Główny kontener listy (ew. wstawiasz tam, gdzie ją rysujesz) */
+/* Kontener listy */
 .bullet-list {
     margin-top: 20px;
     text-align: left;
+    width: 100%;
+    max-width: 800px; /* lub więcej, zależnie od potrzeb */
+    margin: 20px auto;
+    box-sizing: border-box;
 }
 
-/* Pojedynczy element listy (tzw. bullet-item).
-   Dajemy mu ciemne tło, marginesy itp. */
+/* Każdy element notatki */
 .bullet-item {
     display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-    padding: 8px;
-    background: #2a2a2a;
-    border-radius: 6px;
-    cursor: text; /* kursory do edycji tekstu */
+    align-items: flex-start;
+    margin-bottom: 12px;
+    padding: 12px 16px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    cursor: text;
+    width: 100%;
+    box-sizing: border-box;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Pole tekstowe w bullet-item, w którym edytujemy treść notatki */
+/* Zmienny, ale stonowany kolor tła – naprzemienne kolory dla kolejnych elementów */
+.bullet-item:nth-child(odd) {
+    background: #1f1f1f;
+}
+
+.bullet-item:nth-child(even) {
+    background: #252525;
+}
+
+/* Efekt na hover – lekko jaśniejsze tło oraz cień */
+.bullet-item:hover {
+    background: #2a2a2a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Stylizacja pola tekstowego w notatce */
 .bullet-input {
     flex: 1;
     padding: 6px 8px;
@@ -30,28 +47,9 @@
     border: none;
     outline: none;
     background: transparent;
-    color: #f1f1f1;  /* jasny kolor w dark mode */
+    color: #f1f1f1;
+    width: 100%;
+    resize: none;      /* Wyłącza ręczne zmienianie rozmiaru */
+    overflow: hidden;  /* Ukrywa paski przewijania */
+    white-space: pre-wrap;
 }
-
-/* Placeholder dla ikony fold/unfold,
-   lub samej ikony, jeśli chcesz dodać strzałki do zagnieżdżeń */
-.fold-toggle,
-.fold-toggle-placeholder {
-    width: 24px;
-    display: inline-block;
-    text-align: center;
-    margin-right: 8px;
-}
-
-/* Ewentualne style dodatkowe dla itemów zaznaczonych lub poszukiwanych.
-   Jeśli potrzebujesz "selected" – to np.:
-.bullet-item.selected {
-  background: #007bff;
-}
-*/
-
-/* Możesz też dodać styl dla zagnieżdżenia po indent,
-   ale w mechanizmie indent-based
-   najczęściej stosujesz margin-left dynamicznie w style={{ marginLeft: item.indent * 20 }}
-   w samym komponencie React.
-   Więc tu nie zawsze trzeba nic. */
