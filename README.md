@@ -1,70 +1,48 @@
-# Getting Started with Create React App
+# AI Audio Recorder & Transcriber
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Przegląd
+**AI Audio Recorder & Transcriber** to nowoczesna aplikacja full-stack, która umożliwia użytkownikowi nagrywanie lub przesyłanie plików audio (lub dokumentów PDF), automatyczną transkrypcję oraz analizę zawartości za pomocą narzędzi AI. Wygenerowany tekst jest następnie przekazywany do wbudowanego chatu opartego na ChatGPT, dzięki czemu użytkownik może prowadzić interaktywną rozmowę o zawartości nagrania lub dokumentu.
 
-## Available Scripts
+## Funkcjonalności
+- **Nagrywanie/Przesyłanie audio:** Użytkownik może nagrać dźwięk bezpośrednio w przeglądarce lub przesłać gotowy plik audio.
+- **Transkrypcja audio:** Plik audio jest wysyłany do backendu, gdzie przy użyciu Replicate API generowana jest transkrypcja.
+- **Analiza treści:** Transkrypcja (lub zawartość PDF) jest automatycznie przekazywana do ChatGPT, który generuje listę najważniejszych wniosków.
+- **Dynamiczne notatki:** Wygenerowane punkty wyświetlane są w formie edytowalnych notatek (podobnych do Dynalist) – można je modyfikować lub rozszerzać, a każde z nich może służyć jako zapytanie do ChatGPT.
+- **Integracja z ChatGPT:** Cały kontekst (transkrypcja lub analiza PDF) jest przekazywany do wbudowanego chatu, umożliwiając swobodną i inteligentną interakcję.
 
-In the project directory, you can run:
+## Technologie
+- **Frontend:**
+  - **React:** Tworzenie interaktywnego interfejsu użytkownika.
+  - **React Media Recorder:** Nagrywanie dźwięku w przeglądarce.
+  - **Axios:** Obsługa zapytań HTTP między frontendem a backendem.
+  - **jsPDF:** Generowanie plików PDF na podstawie transkrypcji.
+- **Backend:**
+  - **Express.js:** Framework do tworzenia serwera i obsługi API.
+  - **Multer:** Obsługa przesyłania plików.
+  - **ffmpeg & fluent-ffmpeg:** Przetwarzanie i konwersja plików audio.
+  - **pdfjs-dist:** Ekstrakcja tekstu z dokumentów PDF.
+  - **Replicate API:** Wykorzystanie modeli AI do generowania transkrypcji.
+  - **OpenAI API:** Integracja z ChatGPT (GPT-4.5-preview / GPT-4 Turbo) w celu analizy treści.
+- **Deployment:**
+  - **Vercel:** Hosting części frontendowej aplikacji.
+  - **Render:** Hosting backendu.
 
-### `npm start`
+## Przykładowe Zastosowania
+- **Spotkania i konferencje:** Automatyczna transkrypcja nagrań ze spotkań, co umożliwia szybkie sporządzenie protokołu i podsumowanie najważniejszych punktów.
+- **Edukacja:** Przekształcanie wykładów lub seminariów w tekst, ułatwiające późniejszą analizę i naukę.
+- **Analiza dokumentów:** Przesyłanie PDF-ów w celu automatycznej analizy i wyodrębnienia kluczowych informacji.
+- **Wsparcie biznesowe:** Ułatwienie dokumentacji oraz analizy spotkań i rozmów biznesowych, co pomaga w podejmowaniu decyzji.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Jak To Działa
+1. **Nagrywanie/Przesyłanie:** Użytkownik nagrywa dźwięk lub przesyła plik audio (lub dokument PDF) poprzez interfejs aplikacji.
+2. **Przetwarzanie:** Plik jest wysyłany do serwera, gdzie:
+   - Dla audio: Plik jest konwertowany i przesyłany do Replicate API, które generuje transkrypcję.
+   - Dla PDF: Plik jest analizowany przy użyciu pdfjs-dist, a następnie podsumowywany.
+3. **Analiza przez AI:** Transkrypcja lub analiza PDF jest przekazywana do OpenAI API, gdzie ChatGPT generuje listę najważniejszych wniosków.
+4. **Dynamiczne Notatki:** Wygenerowane punkty są wyświetlane w formie edytowalnych notatek (Dynalist). Użytkownik może je modyfikować lub rozwijać, a każda notatka może być użyta jako zapytanie do chatu.
+5. **Context-Aware Chat:** Cały wygenerowany kontekst (transkrypcja lub analiza) jest dostępny w wbudowanym czacie, co umożliwia dalszą, kontekstową interakcję z AI.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
 
-### `npm test`
+##Aplikacja jest dostępna live:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+https://audio-transcriber-frontend.vercel.app/
